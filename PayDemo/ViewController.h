@@ -12,6 +12,7 @@
 
 @interface ViewController : UIViewController
 <PKPaymentAuthorizationViewControllerDelegate>
+@property (weak, nonatomic) IBOutlet UIButton *payButton;
 
 - (IBAction)checkOut:(id)sender;
 

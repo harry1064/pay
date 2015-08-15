@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+//#import "Stripe.h"
 
+//NSString * const stripePublishableKey = @"pk_test_cIRBXCjRs4MS1f7rLZND9VkB";
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
