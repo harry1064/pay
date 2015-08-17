@@ -153,7 +153,8 @@ NSString * const merchantIdentifier = @"merchant.com.42works.ZoneTickets";
     [[STPAPIClient sharedClient]createTokenWithPayment:payment completion:^(STPToken *token, NSError *error) {
         if (error) {
             completion(PKPaymentAuthorizationStatusFailure);
-            [self showAlertWithTitle:@"Transaction Failed"];
+            [self addLog:@"STPToken Error" withDescription:error.description];
+            [self showAlertWithTitle:@"Unable to get STP Token"];
             
             return;
         }
@@ -181,16 +182,20 @@ NSString * const merchantIdentifier = @"merchant.com.42works.ZoneTickets";
         NSLog(@"JSON: %@", responseObject);
         
         if ([[[responseObject objectForKey:@"stripeTransaction"] valueForKey:@"status"]boolValue]) {
+            [self addLog:@"transactionSuccessful" withDescription:[[responseObject objectForKey:@"stripeTransaction"] string]];
             [self showAlertWithTitle:@"Transaction Successful"];
             completion(PKPaymentAuthorizationStatusSuccess);
             
         }else{
+            
+            [self addLog:@"transactionFailed" withDescription:[[responseObject objectForKey:@"stripeTransaction"] string]];
             [self showAlertWithTitle:@"Transaction Failed"];
             completion(PKPaymentAuthorizationStatusFailure);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+        [self addLog:@"Error" withDescription:error.description];
         [self showAlertWithTitle:@"Transaction Failed"];
         completion(PKPaymentAuthorizationStatusFailure);
         
@@ -248,4 +253,25 @@ NSString * const merchantIdentifier = @"merchant.com.42works.ZoneTickets";
         return NO;
     }
 }
+
+-(void)addLog:(NSString *)type withDescription:(NSString *)descr
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *parameters = @{@"type": type,
+                                 @"description":descr,
+                                 @"appName":@"ZoneTickets"};
+    [manager POST:@"https://sandboxlogger42works.herokuapp.com/log/addLog" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"JSON: %@", responseObject);
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+        
+        
+    }];
+
+}
+
+
+
 @end

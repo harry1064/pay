@@ -7,7 +7,7 @@
 //
 
 @import Foundation;
-
+#import <Foundation/Foundation.h>
 
 static NSString *const __nonnull STPSDKVersion = @"5.0.0";
 
